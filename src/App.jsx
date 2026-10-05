@@ -6,12 +6,14 @@ import Pokemon from "./components/Pokemon.jsx";
 function App() {
 
   const [data, setData] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [url, setUrl] = useState(
+      "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0"
+  );
 
   useEffect(() => {
     async function fetchPokemonData() {
       try {
-        const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0");
+        const response = await axios.get(url);
         // const response = await axios.get("https://pokeapi.co/api/v2/pokemon/1/");
 
         console.log(response.data);
@@ -19,20 +21,14 @@ function App() {
       } catch (error) {
         console.error(error);
       } finally {
-        // setLoading(false);
         console.log("finally");
       }
     }
 
     fetchPokemonData();
-  }, []);
+  }, [url]);
 
   console.log(data);
-
-  // if (loading) return <p>Loading...</p>;
-  //
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>;
-
 
 
   return (
@@ -46,6 +42,20 @@ function App() {
                 />
             ))
         )}
+
+        <button
+            disabled={!data?.previous}
+            onClick={() => setUrl(data.previous)}
+        >
+          Vorige
+        </button>
+        <br/>
+        <button
+            disabled={!data?.previous}
+            onClick={() => setUrl(data.next)}
+        >
+          Volgende
+        </button>
       </section>
     </>
   )
