@@ -1,6 +1,8 @@
 import './Pokemon.css'
 
-function Pokemon(){
+function Pokemon({data}){
+
+  console.log("pokemon data" + data);
     return (
         <article>
             <p>Pokemon</p>
