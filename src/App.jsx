@@ -9,9 +9,13 @@ function App() {
   const [url, setUrl] = useState(
       "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0"
   );
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     async function fetchPokemonData() {
+      setLoading(true);
+
       try {
         const response = await axios.get(url);
         // const response = await axios.get("https://pokeapi.co/api/v2/pokemon/1/");
@@ -22,6 +26,7 @@ function App() {
         console.error(error);
       } finally {
         console.log("finally");
+        setLoading(false);
       }
     }
 
@@ -34,7 +39,9 @@ function App() {
   return (
     <>
       <section>
-        {data && (
+        {loading && <p>Loading...</p>}
+
+        {!loading && data && (
             data.results.map((pokemon) => (
                 <Pokemon
                     key={pokemon.name}
