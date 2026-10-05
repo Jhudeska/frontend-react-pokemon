@@ -51,7 +51,7 @@ function App() {
         </button>
         <br/>
         <button
-            disabled={!data?.previous}
+            disabled={!data?.next}
             onClick={() => setUrl(data.next)}
         >
           Volgende
