@@ -1,65 +1,90 @@
 import './App.css'
 import axios from "axios";
 import {useEffect, useState} from "react";
+import Pokemon from "./components/Pokemon.jsx";
 
 function App() {
 
   const [data, setData] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [url, setUrl] = useState(
+      "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0"
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
 
   useEffect(() => {
+
+    const controller = new AbortController();
+
     async function fetchPokemonData() {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=10&offset=0");
+        const response = await axios.get(url, {
+          signal: controller.signal
+        });
+        // const response = await axios.get("https://pokeapi.co/api/v2/pokemon/1/");
+
 
         console.log(response.data);
         setData(response.data);
       } catch (error) {
+        if (error.name === "CanceledError") {
+          return;
+        }
         console.error(error);
+        setError(
+            "Er is iets misgegaan met het ophalen van de Pokémon."
+        );
       } finally {
-        // setLoading(false);
         console.log("finally");
+        setLoading(false);
       }
     }
 
     fetchPokemonData();
-  }, []);
+
+    return () => {
+      controller.abort();
+    };
+
+
+  }, [url]);
 
   console.log(data);
-
-  // if (loading) return <p>Loading...</p>;
-  //
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>;
-
 
 
   return (
     <>
       <section>
-        <article>
-          <p>
-            Name:
-            {/*{data.data.result[0].name}*/}
-          </p>
-          <p>
-            Image:
-            {/*{data.image}*/}
-          </p>
-          <p>
-            Abilities:
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
 
-          </p>
-          <p>
-            Weight:
-          </p>
-          <p>
-            Moves:
-          </p>
-        </article>
+        {!loading && !error && data && (
+            data.results.map((pokemon) => (
+                <Pokemon
+                    key={pokemon.name}
+                    url={pokemon.url}
+                />
+            ))
+        )}
 
-
-
-
+        <button
+            disabled={!data?.previous}
+            onClick={() => setUrl(data.previous)}
+        >
+          Vorige
+        </button>
+        <br/>
+        <button
+            disabled={!data?.next}
+            onClick={() => setUrl(data.next)}
+        >
+          Volgende
+        </button>
       </section>
     </>
   )
