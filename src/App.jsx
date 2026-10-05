@@ -1,5 +1,6 @@
 import './App.css'
 import axios from "axios";
+import Pokemon from "./components/Pokemon.jsx";
 import {useEffect, useState} from "react";
 
 function App() {
@@ -10,7 +11,8 @@ function App() {
   useEffect(() => {
     async function fetchPokemonData() {
       try {
-        const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=10&offset=0");
+        // const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=20&offset=0");
+        const response = await axios.get("https://pokeapi.co/api/v2/pokemon/1/");
 
         console.log(response.data);
         setData(response.data);
@@ -36,29 +38,47 @@ function App() {
   return (
     <>
       <section>
-        <article>
-          <p>
-            Name:
-            {/*{data.data.result[0].name}*/}
-          </p>
-          <p>
-            Image:
-            {/*{data.image}*/}
-          </p>
-          <p>
-            Abilities:
+        {data && (
+            <article>
+              <p>
+                Name:
+                {/*{ " " + data.results[0].name}*/}
+                { " " + data.name}
+              </p>
 
-          </p>
-          <p>
-            Weight:
-          </p>
-          <p>
-            Moves:
-          </p>
-        </article>
+              <p>
+                Image:
+                <img src={data.sprites.front_default} alt={data.name} />
+              </p>
 
+              <p>Abilities:</p>
 
+              <ul>
+                {data.abilities.map((item) => (
+                    <li key={item.ability.name}>
+                      {item.ability.name}
+                    </li>
+                ))}
+              </ul>
 
+              <p>
+                Weight:
+                { " " + data.weight}
+              </p>
+
+              <p>Moves:</p>
+
+              <ul>
+                {data.moves.map((item) => (
+                    <li key={item.move.name}>
+                      {item.move.name}
+                    </li>
+                ))}
+              </ul>
+            </article>
+        )}
+
+        <Pokemon data={data} />
 
       </section>
     </>
